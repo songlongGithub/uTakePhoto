@@ -1,0 +1,28 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="Theme.Crop" parent="Theme.AppCompat.NoActionBar">
+        <item name="listPreferredItemHeightSmall">48dp</item>
+        <item name="switchStyle">@android:style/Widget.CompoundButton</item>
+        <item name="android:displayOptions"></item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
+        <!--        <item name="android:colorBackground">@null</item>-->
+        <item name="android:colorBackgroundCacheHint">@null</item>
+<!--        <item name="android:windowBackground">@drawable/filtershow_tiled_background</item>-->
+        <item name="android:windowBackground">@color/cropBackground</item>
+    </style>
+
+    <style name="Holo.ActionBar" parent="android:Widget.Holo.ActionBar">
+        <item name="android:displayOptions">useLogo|showHome</item>
+        <item name="android:background">@drawable/actionbar_translucent</item>
+        <item name="android:backgroundStacked">@null</item>
+    </style>
+</resources>

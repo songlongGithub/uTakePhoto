@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <RadioGroup
+        android:id="@+id/type_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/take_photo_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="拍照" />
+
+        <RadioButton
+            android:id="@+id/selelct_photo_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择照片" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/crop"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/noCropBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="不裁剪" />
+
+        <RadioButton
+            android:id="@+id/system_crop_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="系统裁剪" />
+
+        <RadioButton
+            android:id="@+id/own_crop_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自带裁剪" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/cropRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="尺寸/比例"
+            android:textColor="#333" />
+
+        <RadioButton
+            android:id="@+id/outputBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="宽x高" />
+
+        <RadioButton
+            android:id="@+id/aspectBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="宽/高" />
+
+        <EditText
+            android:id="@+id/width"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:hint="宽"
+            android:inputType="number"
+            android:minWidth="50dp" />
+
+        <TextView
+            android:id="@+id/cropText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="x" />
+
+        <EditText
+            android:id="@+id/height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:hint="高"
+            android:inputType="number"
+            android:minWidth="50dp" />
+
+    </RadioGroup>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="是否压缩" />
+
+        <RadioButton
+            android:id="@+id/compress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="是" />
+
+        <RadioButton
+            android:id="@+id/noCompress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="否" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/capture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/photoIv" />
+
+    <ImageView
+        android:id="@+id/photoIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</LinearLayout>

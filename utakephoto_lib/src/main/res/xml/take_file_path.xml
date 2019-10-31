@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <paths>
+        <root-path path="" name="camera_photos" />
+        <!-- 这个是保存拍照图片的路径,必须配置。 -->
+        <external-files-path
+            name="images"
+            path="." />
+    </paths>
+</resources>
+
