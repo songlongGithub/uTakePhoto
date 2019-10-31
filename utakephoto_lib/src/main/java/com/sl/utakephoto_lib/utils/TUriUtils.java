@@ -105,7 +105,7 @@ public class TUriUtils {
      * @return
      */
     public static Uri getTempSchemeContentUri(@NonNull Context context, String suffix) {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "/" + timeStamp + (TextUtils.isEmpty(suffix) ? ".jpg" : suffix));
         if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
         return getUriFromFile(context, file);
