@@ -83,7 +83,7 @@
             android:text="宽/高" />
 
         <EditText
-            android:id="@+id/width"
+            android:id="@+id/outputX"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -98,7 +98,7 @@
             android:text="x" />
 
         <EditText
-            android:id="@+id/height"
+            android:id="@+id/outputY"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"

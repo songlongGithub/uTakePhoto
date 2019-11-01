@@ -55,7 +55,7 @@ public class TUriUtils {
                             if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
                             return uri;
                         } else {
-                            Log.w(TAG, "当前是Filtered View视图，不能直接访问App-specific外的文件");
+                            Log.w(TAG, "当前存储空间视图模式是Filtered View，不能直接访问App-specific外的文件");
                             throw new TakeException(TYPE_ANDROID_Q_PERMISSION, "当前是Filtered View，不能直接访问App-specific外的文件，请使用MediaStore或者使用getExternalFilesDirs、" +
                                     "getExternalCacheDirs等，可查看" + " https://developer.android.google.cn/preview/privacy/scoped-storage");
                         }

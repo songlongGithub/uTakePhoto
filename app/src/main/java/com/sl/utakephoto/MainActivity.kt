@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
-import android.util.Log
 import android.widget.Toast
 import com.sl.utakephoto_lib.compress.CompressConfig
 import com.sl.utakephoto_lib.crop.CropOptions
@@ -45,16 +44,16 @@ class MainActivity : AppCompatActivity() {
                 crop = CropOptions.Builder()
                 crop.setWithOwnCrop(true)
             }
-            if (crop != null && (TextUtils.isEmpty(width.text) || TextUtils.isEmpty(height.text))) {
+            if (crop != null && (TextUtils.isEmpty(outputX.text) || TextUtils.isEmpty(outputY.text))) {
                 Toast.makeText(this@MainActivity, "请输入宽高", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (outputBtn.isChecked) {
-                crop?.setOutputX(width.text.toString().toInt())
-                    ?.setOutputY(height.text.toString().toInt())
+                crop?.setOutputX(outputX.text.toString().toInt())
+                    ?.setOutputY(outputY.text.toString().toInt())
             } else {
-                crop?.setAspectX(width.text.toString().toInt())
-                    ?.setAspectX(height.text.toString().toInt())
+                crop?.setAspectX(outputX.text.toString().toInt())
+                    ?.setAspectY(outputY.text.toString().toInt())
             }
             if (crop != null) {
                 takePhotoManager.setCrop(crop.create())

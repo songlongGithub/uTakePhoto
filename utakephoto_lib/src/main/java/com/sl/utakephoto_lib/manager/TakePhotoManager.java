@@ -88,7 +88,7 @@ public class TakePhotoManager implements LifecycleListener {
      */
     private static final int PERMISSION_REQUEST_CODE = 1 << 9;
 
-    private UTakePhoto UTakePhoto;
+    private UTakePhoto uTakePhoto;
     private final Lifecycle lifecycle;
     private Context mContext;
     private Intent intent;
@@ -118,14 +118,14 @@ public class TakePhotoManager implements LifecycleListener {
 
 
     public TakePhotoManager(
-            @NonNull UTakePhoto UTakePhoto,
+            @NonNull UTakePhoto uTakePhoto,
             @NonNull Lifecycle lifecycle,
             @NonNull Context context) {
-        this.UTakePhoto = UTakePhoto;
+        this.uTakePhoto = uTakePhoto;
         this.lifecycle = lifecycle;
         this.mContext = context;
         lifecycle.addListener(this);
-        UTakePhoto.registerRequestManager(this);
+        this.uTakePhoto.registerRequestManager(this);
     }
 
     /**
@@ -232,10 +232,10 @@ public class TakePhotoManager implements LifecycleListener {
             takePhotoResult.takeFailure(new TakeException(TYPE_OTHER, "You have to make sure you call openCamera or openAlbum"));
             return;
         }
-        if (UTakePhoto.getSupportFragment() != null) {
-            supportFragmentPermissionCheck(UTakePhoto.getSupportFragment());
-        } else if (UTakePhoto.getFragment() != null) {
-            fragmentPermissionCheck(UTakePhoto.getFragment());
+        if (uTakePhoto.getSupportFragment() != null) {
+            supportFragmentPermissionCheck(uTakePhoto.getSupportFragment());
+        } else if (uTakePhoto.getFragment() != null) {
+            fragmentPermissionCheck(uTakePhoto.getFragment());
         }
 
     }
@@ -273,10 +273,10 @@ public class TakePhotoManager implements LifecycleListener {
     @Override
     public void onDestroy() {
         lifecycle.removeListener(this);
-        UTakePhoto.unregisterRequestManager(this);
+        uTakePhoto.unregisterRequestManager(this);
         takePhotoResult = null;
         isInit = false;
-        UTakePhoto.onDestroy();
+        uTakePhoto.onDestroy();
         ERROR_ARRAY.clear();
     }
 
@@ -328,9 +328,7 @@ public class TakePhotoManager implements LifecycleListener {
 
         @Override
         protected void onPostExecute(Uri uri) {
-            if (takePhotoResult != null) {
-                takePhotoResult.takeSuccess(Collections.singletonList(uri));
-            }
+            handleResult(uri);
         }
     }
 
@@ -457,7 +455,11 @@ public class TakePhotoManager implements LifecycleListener {
                     obj.printStackTrace();
                     Log.d(TAG, "压缩失败，返回原图");
                     if (takePhotoResult != null) {
-                        takePhotoResult.takeSuccess(Collections.singletonList(outPutUri));
+                        if (obj instanceof TakeException) {
+                            takePhotoResult.takeFailure((TakeException) obj);
+                        } else {
+                            takePhotoResult.takeFailure(new TakeException(TYPE_OTHER, obj.getMessage()));
+                        }
                     }
                 }
             }).compress();
@@ -481,14 +483,14 @@ public class TakePhotoManager implements LifecycleListener {
             for (int i = 0, j = permissions.length; i < j; i++) {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
 
-                    if (UTakePhoto.getSupportFragment() != null) {
-                        if (!PermissionUtils.shouldShowRequestPermissionRationale(UTakePhoto.getSupportFragment(), permissions[i])) {
+                    if (uTakePhoto.getSupportFragment() != null) {
+                        if (!PermissionUtils.shouldShowRequestPermissionRationale(uTakePhoto.getSupportFragment(), permissions[i])) {
                             neverAskAgainList.add(permissions[i]);
                         } else {
                             deniedList.add(permissions[i]);
                         }
-                    } else if (UTakePhoto.getFragment() != null) {
-                        if (!PermissionUtils.shouldShowRequestPermissionRationale(UTakePhoto.getFragment(), permissions[i])) {
+                    } else if (uTakePhoto.getFragment() != null) {
+                        if (!PermissionUtils.shouldShowRequestPermissionRationale(uTakePhoto.getFragment(), permissions[i])) {
                             neverAskAgainList.add(permissions[i]);
                         } else {
                             deniedList.add(permissions[i]);
@@ -553,20 +555,20 @@ public class TakePhotoManager implements LifecycleListener {
 
 
     private void startActivityForResult(Intent intent, int requestCode) {
-        if (UTakePhoto.getSupportFragment() != null) {
-            (UTakePhoto.getSupportFragment()).startActivityForResult(intent, requestCode);
-        } else if (UTakePhoto.getFragment() != null) {
-            (UTakePhoto.getFragment()).startActivityForResult(intent, requestCode);
+        if (uTakePhoto.getSupportFragment() != null) {
+            (uTakePhoto.getSupportFragment()).startActivityForResult(intent, requestCode);
+        } else if (uTakePhoto.getFragment() != null) {
+            (uTakePhoto.getFragment()).startActivityForResult(intent, requestCode);
         }
     }
 
     private void startCropActivityForResult(Intent intent, int requestCode) {
-        if (UTakePhoto.getSupportFragment() != null) {
-            intent.setClass(UTakePhoto.getSupportFragment().getContext(), CropActivity.class);
-            UTakePhoto.getSupportFragment().startActivityForResult(intent, requestCode);
-        } else if (UTakePhoto.getFragment() != null) {
-            intent.setClass(UTakePhoto.getFragment().getActivity(), CropActivity.class);
-            UTakePhoto.getFragment().startActivityForResult(intent, requestCode);
+        if (uTakePhoto.getSupportFragment() != null) {
+            intent.setClass(uTakePhoto.getSupportFragment().getContext(), CropActivity.class);
+            uTakePhoto.getSupportFragment().startActivityForResult(intent, requestCode);
+        } else if (uTakePhoto.getFragment() != null) {
+            intent.setClass(uTakePhoto.getFragment().getActivity(), CropActivity.class);
+            uTakePhoto.getFragment().startActivityForResult(intent, requestCode);
         }
     }
 
