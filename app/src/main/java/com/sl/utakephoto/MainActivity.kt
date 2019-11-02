@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
 import android.widget.Toast
-import com.sl.utakephoto_lib.compress.CompressConfig
-import com.sl.utakephoto_lib.crop.CropOptions
-import com.sl.utakephoto_lib.exception.TakeException
-import com.sl.utakephoto_lib.manager.ITakePhotoResult
-import com.sl.utakephoto_lib.manager.UTakePhoto
+import com.sl.utakephoto.compress.CompressConfig
+import com.sl.utakephoto.crop.CropOptions
+import com.sl.utakephoto.exception.TakeException
+import com.sl.utakephoto.manager.ITakePhotoResult
+import com.sl.utakephoto.manager.UTakePhoto
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 

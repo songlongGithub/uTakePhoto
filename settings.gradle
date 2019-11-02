@@ -1,2 +1,2 @@
-include ':app', ':utakephoto_lib'
+include ':app', ':utakephoto'
 rootProject.name='uTakePhoto'
