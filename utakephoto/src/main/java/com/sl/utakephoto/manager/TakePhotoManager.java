@@ -118,7 +118,7 @@ public class TakePhotoManager implements LifecycleListener {
     }
 
 
-    public TakePhotoManager(
+    TakePhotoManager(
             @NonNull UTakePhoto uTakePhoto,
             @NonNull Lifecycle lifecycle,
             @NonNull Context context) {

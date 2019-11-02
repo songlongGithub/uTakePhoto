@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * author : Sl
  * createDate   : 2019-10-1521:16
- * desc   :
+ * desc   :拍照，选择图片，裁剪，压缩，适配androidQ
  */
 public class UTakePhoto {
 
@@ -74,16 +74,16 @@ public class UTakePhoto {
         mFragment = fragment;
     }
 
-    public void onDestroy() {
+    void onDestroy() {
         mFragment = null;
         mSupportFragment = null;
     }
 
-    public android.app.Fragment getFragment() {
+    android.app.Fragment getFragment() {
         return mFragment;
     }
 
-    public Fragment getSupportFragment() {
+    Fragment getSupportFragment() {
         return mSupportFragment;
     }
 

@@ -141,7 +141,7 @@ public class CompressImageImpl implements CompressImage, Handler.Callback {
         return null;
     }
 
-    boolean needCompress(int leastCompressSize, InputStream path) {
+    private boolean needCompress(int leastCompressSize, InputStream path) {
         if (leastCompressSize > 0) {
             try {
                 return path.available() > (leastCompressSize << 10);

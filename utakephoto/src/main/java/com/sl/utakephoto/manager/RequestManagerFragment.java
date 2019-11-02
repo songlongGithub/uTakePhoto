@@ -75,16 +75,16 @@ public final class RequestManagerFragment extends Fragment {
         lifecycle.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public TakePhotoManager getTakePhotoManager() {
+    TakePhotoManager getTakePhotoManager() {
         return takePhotoManager;
     }
 
-    public void setTakePhotoManager(TakePhotoManager takePhotoManager) {
+    void setTakePhotoManager(TakePhotoManager takePhotoManager) {
         this.takePhotoManager = takePhotoManager;
     }
 
     @NonNull
-    public ActivityFragmentLifecycle getTakePhotoLifecycle() {
+    ActivityFragmentLifecycle getTakePhotoLifecycle() {
         return lifecycle;
     }
 

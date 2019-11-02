@@ -231,7 +231,7 @@ class RequestManagerRetriever implements Handler.Callback {
     public interface RequestManagerFactory {
         @NonNull
         TakePhotoManager build(
-                @NonNull UTakePhoto UTakePhoto,
+                @NonNull UTakePhoto uTakePhoto,
                 @NonNull Lifecycle lifecycle,
                 @NonNull Context context);
 

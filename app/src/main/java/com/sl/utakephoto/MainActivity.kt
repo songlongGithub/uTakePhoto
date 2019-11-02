@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         capture.setOnClickListener {
 
-            val takePhotoManager = UTakePhoto.with(this)
+            val takePhotoManager = UTakePhoto .with(this)
             if (take_photo_btn.isChecked) {
                 takePhotoManager.openCamera("Pictures/bodivis")
             } else {
