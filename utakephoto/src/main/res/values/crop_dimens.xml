@@ -7,4 +7,6 @@
     <dimen name="crop_touch_tolerance">20dp</dimen>
     <dimen name="wp_selector_dash_length">4dp</dimen>
     <dimen name="wp_selector_off_length">4dp</dimen>
+    <dimen name="filter_show_height">48dp</dimen>
+
 </resources>

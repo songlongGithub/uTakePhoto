@@ -1,8 +1,7 @@
 <resources>
-    <string name="app_name">TakePhoto</string>
+    <string name="app_name">uTakePhoto</string>
     <string name="save">保存</string>
     <string name="cancle">取消</string>
     <string name="select_image">Select photo</string>
-    <string name="setting_wallpaper">在設定桌布</string>
     <string name="cannot_load_image">图片加载失败</string>
 </resources>

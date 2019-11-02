@@ -3,4 +3,5 @@
     <color name="crop_shadow_color">#CF000000</color>
     <color name="crop_shadow_wp_color">#4F000000</color>
     <color name="crop_wp_markers">#7FFFFFFF</color>
+    <color name="cropBackground">#000000</color>
 </resources>
