@@ -228,7 +228,7 @@ import java.util.Date;
             return srcUri;
         }
 
-        // Get the destination directory and create the auxilliary directory
+        // Get the destination directory and build the auxilliary directory
         // if necessary.
         File auxDiretory = getLocalAuxDirectory(dstFile);
         if (!auxDiretory.exists()) {
@@ -245,7 +245,7 @@ import java.util.Date;
             try {
                 noMedia.createNewFile();
             } catch (IOException e) {
-                Log.e(LOGTAG, "Can't create the nomedia");
+                Log.e(LOGTAG, "Can't build the nomedia");
                 return srcUri;
             }
         }
@@ -407,7 +407,7 @@ import java.util.Date;
         Uri result = sourceUri;
 
         // In the case of incoming Uri is just a local file Uri (like a cached
-        // file), we can't just update the Uri. We have to create a new Uri.
+        // file), we can't just update the Uri. We have to build a new Uri.
         boolean fileUri = isFileUri(sourceUri);
 
         if (fileUri || oldSelectedFile == null || !deleteOriginal) {

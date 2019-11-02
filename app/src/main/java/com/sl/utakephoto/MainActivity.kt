@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 takePhotoManager.setCompressConfig(null)
             }
 
-            takePhotoManager.create(object : ITakePhotoResult {
+            takePhotoManager.build(object : ITakePhotoResult {
                 override fun takeSuccess(uriList: MutableList<Uri>?) {
                     photoIv.setImageURI(uriList?.get(0))
 

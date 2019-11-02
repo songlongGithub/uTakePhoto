@@ -299,14 +299,14 @@ public class CropView extends View {
         mScreenBounds = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
         mScreenBounds.inset(mMargin, mMargin);
 
-        // If crop object doesn't exist, create it and update it from master
+        // If crop object doesn't exist, build it and update it from master
         // state
         if (mCropObj == null) {
             reset();
             mCropObj = new CropObject(mImageBounds, mImageBounds, 0);
         }
 
-        // If display matrix doesn't exist, create it and its dependencies
+        // If display matrix doesn't exist, build it and its dependencies
         if (mDisplayMatrix == null || mDisplayMatrixInverse == null) {
             mDisplayMatrix = new Matrix();
             mDisplayMatrix.reset();

@@ -61,7 +61,7 @@ public class TakePhotoManager implements LifecycleListener {
      */
     private static final int TAKE_PHOTO_RESULT = 1 << 2;
     /**
-     * 选择ResultCode
+     * 选择相册ResultCode
      */
     private static final int DIRECTORY_PICTURES_RESULT = 1 << 3;
     /**
@@ -130,7 +130,7 @@ public class TakePhotoManager implements LifecycleListener {
     }
 
     /**
-     * 默认储存在getExternalFilesDir/Pictures目录下
+     * 默认储存在getExternalFilesDir(Pictures)目录下
      *
      * @return
      */
@@ -150,7 +150,7 @@ public class TakePhotoManager implements LifecycleListener {
 
     /**
      * 打开系统相机，输出路径自定义
-     * 在androidQ上建议采用这个方法，因为如果采用outPutUri的方式，会在mediaStore创建一个空的img
+     * 在androidQ上建议采用这个方法，因为如果采用传入mediaStore的Uri的方式，会在m相册里创建一个空的img
      *
      * @param relativePath androidQ上清单文件中android:requestLegacyExternalStorage="true"
      *                     则relativePath 必须以 Pictures/DCIM 为跟路径；
@@ -200,7 +200,6 @@ public class TakePhotoManager implements LifecycleListener {
      */
     public TakePhotoManager openAlbum(Intent intent) {
         takeType = TYPE_SELECT_IMAGE;
-//
         this.intent = intent;
         return this;
     }
@@ -216,7 +215,7 @@ public class TakePhotoManager implements LifecycleListener {
     }
 
 
-    public void create(ITakePhotoResult takePhotoResult) {
+    public void build(ITakePhotoResult takePhotoResult) {
         this.takePhotoResult = takePhotoResult;
         if (!isInit) {
             return;
