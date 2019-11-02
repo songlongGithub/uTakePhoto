@@ -1,9 +1,11 @@
 package com.sl.utakephoto
 
+import android.content.ContentValues
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.widget.Toast
 import com.sl.utakephoto.compress.CompressConfig
@@ -63,11 +65,15 @@ class MainActivity : AppCompatActivity() {
             if (compress.isChecked) {
                 takePhotoManager.setCompressConfig(
                     CompressConfig.Builder().setLeastCompressSize(50).setTargetUri(
-                        Uri.fromFile(
-                            File(
-                                Environment.getExternalStorageDirectory(),
-                                "/bodivis/10086.png"
-                            )
+//                        Uri.fromFile(
+//                            File(
+//                                Environment.getExternalStorageDirectory(),
+//                                "/bodivis/10086.png"
+//                            )
+//                        )androidQ会报错
+                        contentResolver.insert(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            ContentValues()
                         )
 
                     ).create()
