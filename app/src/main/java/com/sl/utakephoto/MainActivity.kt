@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 ////                            ContentValues()
 ////                        )
 //                )
-                takePhotoManager.openCamera("Pictures/bodivis")
+                takePhotoManager.openCamera("Pictures/uTakePhoto")
             } else {
                 takePhotoManager.openAlbum()
             }
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                         Uri.fromFile(
                             File(
                                 Environment.getExternalStorageDirectory(),
-                                "bodivis/test2.jpg"
+                                "uTakePhoto/test2.jpg"
                             )
                         )//androidQ会报错
 //                        contentResolver.insert(
