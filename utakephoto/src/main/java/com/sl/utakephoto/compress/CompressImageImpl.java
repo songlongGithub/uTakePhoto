@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -21,6 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.sl.utakephoto.utils.TConstant.TAG;
 
 public class CompressImageImpl implements CompressImage, Handler.Callback {
     private final Handler mHandler;
@@ -116,7 +120,7 @@ public class CompressImageImpl implements CompressImage, Handler.Callback {
             tagBitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 60, stream);
             tagBitmap.recycle();
             targetUri = TUriUtils.checkCropUri(context, targetUri, ImgUtil.extSuffix(uri));
-
+            Log.e(TAG,"compress targetUri:"+targetUri);
             OutputStream outputStream = context.getContentResolver().openOutputStream(targetUri);
             if (outputStream != null) {
                 outputStream.write(stream.toByteArray());

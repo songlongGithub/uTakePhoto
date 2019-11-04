@@ -41,12 +41,12 @@ public class TUriUtils {
                     Log.w(TConstant.TAG, "当前是Legacy View视图，兼容File方式访问");
                     File file = new File(uri.getPath());
                     if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
-                    return getUriFromFile(context,file);
+                    return getUriFromFile(context, file);
                 } else {
                     if (checkAppSpecific(uri, context)) {
                         File file = new File(uri.getPath());
                         if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
-                        return getUriFromFile(context,file);
+                        return getUriFromFile(context, file);
                     } else {
                         Log.w(TConstant.TAG, "当前存储空间视图模式是Filtered View，不能直接访问App-specific外的文件");
                         throw new TakeException(TConstant.TYPE_ANDROID_Q_PERMISSION, "当前是Filtered View，不能直接访问App-specific外的文件，Environment.getExternalStorageDirectory()不能使用，请使用MediaStore或者使用getExternalFilesDirs、" +
@@ -54,10 +54,14 @@ public class TUriUtils {
                     }
                 }
 
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            } else {
                 File file = new File(uri.getPath());
                 if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
-                return getUriFromFile(context, file);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    return getUriFromFile(context, file);
+                } else {
+                    return Uri.fromFile(file);
+                }
             }
         }
         return uri;
@@ -93,6 +97,10 @@ public class TUriUtils {
                     }
                 }
 
+            } else {
+                File file = new File(uri.getPath());
+                if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+                return Uri.fromFile(file);
             }
         }
         return uri;
@@ -137,7 +145,11 @@ public class TUriUtils {
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "/" + timeStamp + (TextUtils.isEmpty(suffix) ? ".jpg" : suffix));
         if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
-        return getUriFromFile(context, file);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return getUriFromFile(context, file);
+        } else {
+            return Uri.fromFile(file);
+        }
 
     }
 
