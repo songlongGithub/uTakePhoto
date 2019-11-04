@@ -173,7 +173,22 @@ CompressConfig compressConfig = new CompressConfig.Builder()
                 .setTargetUri()//压缩图片储存路径
                 .create();
 UTakePhoto.with(mActivity).openCamera().setCompressConfig(compressConfig)
+```
+## 旋转原图
 
+在不进行压缩和裁剪的情况下，是否对图片进行旋转操作，旋转操作是耗时操作
+```
+/**
+     * 在返回原图的时候，也就是不进行压缩和裁剪的处理直接返回原图的时候，是否需要旋转图片
+     * 压缩和裁剪会自动处理旋转角度
+     *
+     * @param rotate true：旋转 false：原图
+     * @return
+     */
+    public TakePhotoManager setCameraPhotoRotate(boolean rotate) {
+        this.rotateCameraPhoto = rotate;
+        return this;
+    }
 ```
 ## 注意
 1.如何获取path
@@ -190,22 +205,32 @@ relativePath对应AndoridQ的MediaStore.Images.Media.RELATIVE_PATH，MediaColumn
 建议使用relativePath的时候，加以区分，如openCamera(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? "Pictures/项目名称等等" : "项目名称等等")；
 使用relativePath会主动刷新相册。
 
-3.支持多图选择吗
+3.建议采用压缩
+
+目前手机拍照动不动就2Mb，3Mb，甚至更大，建议默认采用压缩，基于luban压缩算法，效果还是很好的。
+
+4.支持多图选择吗
 
 支持，正在写，还没写完，哈哈
 
-4.支持AndroidX吗
+5.支持AndroidX吗
 
 支持，低版本的有需求的话，我再写一个；
 
-5.AndroidQ的问题
+6.AndroidQ的问题
 MediaStore中，DATA（即_data）字段，在Android Q中开始废弃，不再表示文件的真实路径。读写文件或判断文件是否存在，不应该使用DATA字段，而要使用openFileDescriptor。
 同时也无法直接使用路径访问公共目录的文件。
 
 
 5.有问题可以通过issue反馈，或者发送到616727136@qq.com邮箱
 
+## 版本更新
+**1.0.5**
+* 1.修改回调返回原图的bug
+* 2.添加在不进行压缩和裁剪的情况下，是否旋转原图的选项，默认不旋转处理；
+
 ## License
+```
    Copyright 2019 sl
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -219,3 +244,4 @@ MediaStore中，DATA（即_data）字段，在Android Q中开始废弃，不再�
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+```

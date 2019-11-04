@@ -110,7 +110,7 @@ public class CompressImageImpl implements CompressImage, Handler.Callback {
             options.inSampleSize = ImgUtil.computeSize(inputStream);
             Bitmap tagBitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, options);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            if (ImgUtil.JPEG_MIME_TYPE(uri)) {
+            if (ImgUtil.JPEG_MIME_TYPE(context,uri)) {
                 tagBitmap = ImgUtil.rotatingImage(tagBitmap, ImgUtil.getMetadataRotation(context, uri));
             }
             tagBitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 60, stream);
@@ -131,10 +131,10 @@ public class CompressImageImpl implements CompressImage, Handler.Callback {
                 //保存到指定路径
                 Bitmap tagBitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri));
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                if (ImgUtil.JPEG_MIME_TYPE(uri)) {
+                if (ImgUtil.JPEG_MIME_TYPE(context,uri)) {
                     tagBitmap = ImgUtil.rotatingImage(tagBitmap, ImgUtil.getMetadataRotation(context, uri));
                 }
-                tagBitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 100, stream);
+                tagBitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 90, stream);
                 tagBitmap.recycle();
                 targetUri = TUriUtils.checkCropUri(context, targetUri, ImgUtil.extSuffix(uri));
 

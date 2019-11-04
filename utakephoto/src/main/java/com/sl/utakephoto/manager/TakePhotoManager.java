@@ -97,6 +97,10 @@ public class TakePhotoManager implements LifecycleListener {
     private String relativePath;
     private CompressConfig compressConfig;
     private ITakePhotoResult takePhotoResult;
+    /**
+     * 只有在拍照后，不压缩，不裁剪，返回原图的时候，是否自动旋转
+     */
+    private boolean rotateCameraPhoto;
 
     private Uri outPutUri;
     private Uri tempUri;
@@ -116,6 +120,8 @@ public class TakePhotoManager implements LifecycleListener {
         ERROR_ARRAY.put(TConstant.TYPE_NO_CAMERA, "没有找到拍照的Intent");
         ERROR_ARRAY.put(TConstant.TYPE_NO_FIND, "选择的文件没有找到");
     }
+
+    private SaveSourceImgTask saveSourceImgTask;
 
 
     TakePhotoManager(
@@ -180,6 +186,18 @@ public class TakePhotoManager implements LifecycleListener {
         this.outPutUri = outPutUri;
         this.intent = intent;
         this.relativePath = relativePath;
+        return this;
+    }
+
+    /**
+     * 在返回原图的时候，也就是不进行压缩和裁剪的处理直接返回原图的时候，是否需要旋转图片
+     * 压缩和裁剪会自动处理旋转角度
+     *
+     * @param rotate true：旋转 false：原图
+     * @return
+     */
+    public TakePhotoManager setCameraPhotoRotate(boolean rotate) {
+        this.rotateCameraPhoto = rotate;
         return this;
     }
 
@@ -278,6 +296,10 @@ public class TakePhotoManager implements LifecycleListener {
         isInit = false;
         uTakePhoto.onDestroy();
         ERROR_ARRAY.clear();
+        mContext = null;
+        if (saveSourceImgTask != null) {
+            saveSourceImgTask.cancel(true);
+        }
     }
 
     @Override
@@ -288,20 +310,14 @@ public class TakePhotoManager implements LifecycleListener {
                     crop(outPutUri);
                 } else if (compressConfig != null) {
                     compress(outPutUri);
-                } else {
-                    if (relativePath == null || relativePath.length() == 0) {
-                        if (takePhotoResult != null) {
-                            takePhotoResult.takeSuccess(Collections.singletonList(outPutUri));
-                        }
+                } else if (!rotateCameraPhoto) {
+                    if (takePhotoResult != null) {
+                        takePhotoResult.takeSuccess(Collections.singletonList(outPutUri));
                     }
                 }
-                //拍完照 如果设置的是相对路径，需要把图片储存在这个路径下
-                if (relativePath != null && relativePath.length() != 0) {
-                    SaveSourceImgTask saveSourceImgTask = new SaveSourceImgTask();
-                    saveSourceImgTask.execute(outPutUri);
-                }
 
-
+                saveSourceImgTask = new SaveSourceImgTask();
+                saveSourceImgTask.execute(outPutUri);
             } else {
                 takeCancel();
             }
@@ -310,7 +326,7 @@ public class TakePhotoManager implements LifecycleListener {
                 if (cropOptions != null) {
                     crop(data.getData());
                 } else {
-                    compress(data.getData());
+                    handleResult(data.getData());
                 }
             } else {
                 takeCancel();
@@ -318,7 +334,7 @@ public class TakePhotoManager implements LifecycleListener {
         } else if (requestCode == PHOTO_WITCH_CROP_RESULT) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    compress(tempUri);
+                    handleResult(tempUri);
                 }
             } else {
                 takeCancel();
@@ -339,8 +355,8 @@ public class TakePhotoManager implements LifecycleListener {
 
         @Override
         protected void onPostExecute(Uri uri) {
-            if (cropOptions == null) {
-                compress(uri);
+            if (cropOptions == null && compressConfig == null && takePhotoResult != null && rotateCameraPhoto) {
+                takePhotoResult.takeSuccess(Collections.singletonList(uri));
             }
         }
     }
@@ -355,72 +371,94 @@ public class TakePhotoManager implements LifecycleListener {
         OutputStream outputStream = null;
         InputStream inputStream = null;
         FileOutputStream fos = null;
-
         try {
             inputStream = mContext.getContentResolver().openInputStream(outPutUri);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.Images.Media.MIME_TYPE, ImgUtil.getMimeType(outPutUri));
-                String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
-                values.put(MediaStore.Images.Media.DISPLAY_NAME, timeStamp + ImgUtil.extSuffix(outPutUri));
-                values.put(MediaStore.Images.Media.RELATIVE_PATH, relativePath);
-                String status = Environment.getExternalStorageState();
-                ContentResolver contentResolver = mContext.getContentResolver();
-                Uri insert;
-                // 判断是否有SD卡,优先使用SD卡存储,当没有SD卡时使用手机存储
-                if (Environment.MEDIA_MOUNTED.equals(status)) {
-                    insert = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            //拍完照 如果设置的是相对路径，需要把图片储存在relativePath下,否则放到指定uri中
+            if (relativePath != null && relativePath.length() != 0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Images.Media.MIME_TYPE, ImgUtil.getMimeType(outPutUri));
+                    String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
+                    values.put(MediaStore.Images.Media.DISPLAY_NAME, timeStamp + ImgUtil.extSuffix(outPutUri));
+                    values.put(MediaStore.Images.Media.RELATIVE_PATH, relativePath);
+                    String status = Environment.getExternalStorageState();
+                    ContentResolver contentResolver = mContext.getContentResolver();
+                    Uri insert;
+                    // 判断是否有SD卡,优先使用SD卡存储,当没有SD卡时使用手机存储
+                    if (Environment.MEDIA_MOUNTED.equals(status)) {
+                        insert = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                    } else {
+                        insert = contentResolver.insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, values);
+                    }
+                    if (insert != null) {
+                        outputStream = contentResolver.openOutputStream(insert);
+                        Bitmap tagBitmap = BitmapFactory.decodeStream(
+                                mContext.getContentResolver().openInputStream(outPutUri));
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        if (ImgUtil.JPEG_MIME_TYPE(mContext, outPutUri)) {
+                            tagBitmap = ImgUtil.rotatingImage(tagBitmap, ImgUtil.getMetadataRotation(mContext, outPutUri));
+                        }
+                        tagBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+                        tagBitmap.recycle();
+                        if (outputStream != null) {
+                            outputStream.write(stream.toByteArray());
+                        }
+                        Log.d(TConstant.TAG, "原图路径 :" + insert);
+                    }
+                    return insert;
+
                 } else {
-                    insert = contentResolver.insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, values);
-                }
-                if (insert != null) {
-                    outputStream = contentResolver.openOutputStream(insert);
-//                    BitmapFactory.Options options = new BitmapFactory.Options();
-//                    options.inSampleSize = ImgUtil.computeSize(inputStream);
                     Bitmap tagBitmap = BitmapFactory.decodeStream(
                             mContext.getContentResolver().openInputStream(outPutUri));
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    if (ImgUtil.JPEG_MIME_TYPE(outPutUri)) {
+                    if (ImgUtil.JPEG_MIME_TYPE(mContext, outPutUri)) {
+                        //检查角度，旋转
                         tagBitmap = ImgUtil.rotatingImage(tagBitmap, ImgUtil.getMetadataRotation(mContext, outPutUri));
                     }
-                    tagBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    tagBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
                     tagBitmap.recycle();
-                    if (outputStream != null) {
-                        outputStream.write(stream.toByteArray());
-                    }
-                    Log.d(TConstant.TAG, "原图路径 :" + insert);
 
+                    String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
+                    File outputFile = new File(Environment.getExternalStorageDirectory(),
+                            relativePath + "/" + timeStamp + ImgUtil.extSuffix(outPutUri));
+                    if (!outputFile.getParentFile().exists())
+                        outputFile.getParentFile().mkdirs();
+                    Log.d(TConstant.TAG, "原图路径 :" + outputFile.getPath());
+                    fos = new FileOutputStream(outputFile);
+                    fos.write(stream.toByteArray());
+                    Uri uri = Uri.fromFile(outputFile);
+                    mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+                    return uri;
                 }
-
-                return insert;
-
-            } else {
+            } else if (rotateCameraPhoto) {
+                //检查是否需要旋转
 //                BitmapFactory.Options options = new BitmapFactory.Options();
 //                options.inSampleSize = ImgUtil.computeSize(inputStream);
-                Bitmap tagBitmap = BitmapFactory.decodeStream(
-                        mContext.getContentResolver().openInputStream(outPutUri));
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                if (ImgUtil.JPEG_MIME_TYPE(outPutUri)) {
-                    tagBitmap = ImgUtil.rotatingImage(tagBitmap, ImgUtil.getMetadataRotation(mContext, outPutUri));
-                }
-                tagBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                tagBitmap.recycle();
+                if (ImgUtil.JPEG_MIME_TYPE(mContext, outPutUri)) {
+                    int metadataRotation = ImgUtil.getMetadataRotation(mContext, outPutUri);
+                    if (metadataRotation != 0) {
+                        Bitmap tagBitmap = BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream(outPutUri));
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        tagBitmap = ImgUtil.rotatingImage(tagBitmap, metadataRotation);
+                        tagBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+                        tagBitmap.recycle();
+                        outputStream = mContext.getContentResolver().openOutputStream(outPutUri);
+                        if (outputStream != null) {
+                            outputStream.write(stream.toByteArray());
+                        }
+                    }
 
-                String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
-                File outputFile = new File(Environment.getExternalStorageDirectory(),
-                        relativePath + "/" + timeStamp + ImgUtil.extSuffix(outPutUri));
-                if (!outputFile.getParentFile().exists()) outputFile.getParentFile().mkdirs();
-                Log.d(TConstant.TAG, "原图路径 :" + outputFile.getPath());
-                fos = new FileOutputStream(outputFile);
-                fos.write(stream.toByteArray());
-                Uri uri = Uri.fromFile(outputFile);
-                mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-                return uri;
+                }
+
+                return outPutUri;
             }
+
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
             e.printStackTrace();
         } finally {
             close(fos);
@@ -440,41 +478,45 @@ public class TakePhotoManager implements LifecycleListener {
         }
     }
 
-    private void compress(final Uri outPutUri) {
+    private void handleResult(Uri outPutUri) {
         if (compressConfig == null) {
             if (takePhotoResult != null) {
                 takePhotoResult.takeSuccess(Collections.singletonList(outPutUri));
             }
         } else {
-            CompressImageImpl.of(mContext, compressConfig, Collections.singletonList(outPutUri), new CompressImage.CompressListener() {
-                @Override
-                public void onStart() {
-
-                }
-
-                @Override
-                public void onSuccess(Uri images) {
-                    if (takePhotoResult != null) {
-                        Log.d(TConstant.TAG, "压缩成功 uri：" + images);
-                        takePhotoResult.takeSuccess(Collections.singletonList(images));
-                    }
-                }
-
-                @Override
-                public void onError(Throwable obj) {
-                    obj.printStackTrace();
-                    Log.d(TConstant.TAG, "压缩失败");
-                    if (takePhotoResult != null) {
-                        if (obj instanceof TakeException) {
-                            takePhotoResult.takeFailure((TakeException) obj);
-                        } else {
-                            takePhotoResult.takeFailure(new TakeException(TConstant.TYPE_OTHER, obj.getMessage()));
-                        }
-                    }
-                }
-            }).compress();
+            compress(outPutUri);
         }
+    }
 
+    private void compress(final Uri outPutUri) {
+
+        CompressImageImpl.of(mContext, compressConfig, Collections.singletonList(outPutUri), new CompressImage.CompressListener() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(Uri images) {
+                if (takePhotoResult != null) {
+                    Log.d(TConstant.TAG, "压缩成功 uri：" + images);
+                    takePhotoResult.takeSuccess(Collections.singletonList(images));
+                }
+            }
+
+            @Override
+            public void onError(Throwable obj) {
+                obj.printStackTrace();
+                Log.d(TConstant.TAG, "压缩失败");
+                if (takePhotoResult != null) {
+                    if (obj instanceof TakeException) {
+                        takePhotoResult.takeFailure((TakeException) obj);
+                    } else {
+                        takePhotoResult.takeFailure(new TakeException(TConstant.TYPE_OTHER, obj.getMessage()));
+                    }
+                }
+            }
+        }).compress();
 
     }
 
