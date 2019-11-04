@@ -3,8 +3,12 @@ package com.sl.utakephoto.manager;
 import android.app.Activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+
+import com.sl.utakephoto.compress.CompressConfig;
+import com.sl.utakephoto.crop.CropOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,19 @@ public class UTakePhoto {
     private final List<TakePhotoManager> managers = new ArrayList<>();
     private android.app.Fragment mFragment;
     private Fragment mSupportFragment;
+    static CompressConfig mCompressConfig;
+    static CropOptions mCropOptions;
+
+    /**
+     * 初始化
+     *
+     * @param compressConfig
+     * @param cropOptions
+     */
+    public static void init(@Nullable CompressConfig compressConfig, @Nullable CropOptions cropOptions) {
+        mCompressConfig = compressConfig;
+        mCropOptions = cropOptions;
+    }
 
     /**
      * 在FragmentActivity使用

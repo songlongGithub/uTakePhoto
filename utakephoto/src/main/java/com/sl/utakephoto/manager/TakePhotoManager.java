@@ -131,6 +131,8 @@ public class TakePhotoManager implements LifecycleListener {
         this.uTakePhoto = uTakePhoto;
         this.lifecycle = lifecycle;
         this.mContext = context;
+        compressConfig = UTakePhoto.mCompressConfig;
+        cropOptions = UTakePhoto.mCropOptions;
         lifecycle.addListener(this);
         this.uTakePhoto.registerRequestManager(this);
     }

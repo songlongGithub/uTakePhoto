@@ -91,6 +91,15 @@ UTakePhoto.with(mActivity).openCamera().build(new ITakePhotoResult() {
             }
         });
 ```
+## 初始化
+UTakePhoto.init()；可以在application中配置压缩和裁剪
+```
+ public static void init(CompressConfig compressConfig, CropOptions cropOptions) {
+        mCompressConfig = compressConfig;
+        mCropOptions = cropOptions;
+    }
+```
+
 ## 拍照
 
 ```
@@ -225,9 +234,10 @@ MediaStore中，DATA（即_data）字段，在Android Q中开始废弃，不再�
 5.有问题可以通过issue反馈，或者发送到616727136@qq.com邮箱
 
 ## 版本更新
-**1.0.5**
+**1.0.6**
 * 1.修改回调返回原图的bug
 * 2.添加在不进行压缩和裁剪的情况下，是否旋转原图的选项，默认不旋转处理；
+* 3.添加全局初始化
 
 ## License
 ```

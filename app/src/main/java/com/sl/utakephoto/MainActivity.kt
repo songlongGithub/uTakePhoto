@@ -19,6 +19,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+//        UTakePhoto.init(
+//            CompressConfig.Builder().setLeastCompressSize(300).create(),
+//            CropOptions.Builder().setOutputX(500).setOutputY(500).setWithOwnCrop(true).create()
+//        )
         cropRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId == R.id.outputBtn) {
                 cropText.text = "*"
