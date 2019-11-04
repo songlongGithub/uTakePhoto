@@ -176,17 +176,21 @@ UTakePhoto.with(mActivity).openCamera().setCompressConfig(compressConfig)
 
 ```
 ## 注意
-1.如果获取path
+1.如何获取path
+
 因为为了兼容Android Q，放弃了传统的以File输入输出，如果仍然想获取File文件，
 一种是指定scheme为File的Uri，但在AndroidQ上可能无法使用；
 另一种就是不传Uri，这时候返回的就是路径为getExternalFilesDir(Pictures)目录下，scheme为File的Uri，可以通过uri.getPath（）获取File；
 压缩返回同理
 
 2.relativePath如何使用
+
 relativePath对应AndoridQ的MediaStore.Images.Media.RELATIVE_PATH，MediaColumns.RELATIVE_PATH来指定存储的次级目录，这个目录可以使多级；
 但使用的时候需要注意，必须以 Pictures/DCIM 为跟路径；AndroidQ以下根路径Environment.getExternalStorageDirectory()，这时候relativePath就可以为任意子路径
+建议使用relativePath的时候，openCamera(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? "Pictures/项目名称等等" : "项目名称等等")
 
 3.支持多图选择吗
+
 支持，正在写，还没写完，哈哈
 
 4.有问题可以通过issue反馈，或者发送到616727136@qq.com邮箱
