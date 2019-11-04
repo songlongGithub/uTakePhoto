@@ -9,7 +9,8 @@ import android.net.Uri;
  */
 public class CompressConfig {
     /**
-     * 压缩后输入Uri
+     * 压缩后输入Uri,默认存储在内部空间 storage/emulated/0/Android/data/包名/Pictures/目录下
+     *
      */
     private Uri targetUri;
     /**

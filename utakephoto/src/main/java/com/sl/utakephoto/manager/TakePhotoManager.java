@@ -328,7 +328,10 @@ public class TakePhotoManager implements LifecycleListener {
 
         @Override
         protected void onPostExecute(Uri uri) {
-            handleResult(uri);
+            //不需要裁剪 直接返回
+            if (cropOptions == null) {
+                handleResult(uri);
+            }
         }
     }
 
