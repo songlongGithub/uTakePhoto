@@ -286,11 +286,19 @@ public class TakePhotoManager implements LifecycleListener {
             if (resultCode == RESULT_OK) {
                 if (cropOptions != null) {
                     crop(outPutUri);
+                } else if (compressConfig != null) {
+                    compress(outPutUri);
+                } else {
+                    if (relativePath == null || relativePath.length() == 0) {
+                        if (takePhotoResult != null) {
+                            takePhotoResult.takeSuccess(Collections.singletonList(outPutUri));
+                        }
+                    }
                 }
                 //拍完照 如果设置的是相对路径，需要把图片储存在这个路径下
                 if (relativePath != null && relativePath.length() != 0) {
-                    ChangeUriTask changeUriTask = new ChangeUriTask();
-                    changeUriTask.execute(outPutUri);
+                    SaveSourceImgTask saveSourceImgTask = new SaveSourceImgTask();
+                    saveSourceImgTask.execute(outPutUri);
                 }
 
 
@@ -302,7 +310,7 @@ public class TakePhotoManager implements LifecycleListener {
                 if (cropOptions != null) {
                     crop(data.getData());
                 } else {
-                    handleResult(data.getData());
+                    compress(data.getData());
                 }
             } else {
                 takeCancel();
@@ -310,7 +318,7 @@ public class TakePhotoManager implements LifecycleListener {
         } else if (requestCode == PHOTO_WITCH_CROP_RESULT) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    handleResult(tempUri);
+                    compress(tempUri);
                 }
             } else {
                 takeCancel();
@@ -319,7 +327,10 @@ public class TakePhotoManager implements LifecycleListener {
 
     }
 
-    private class ChangeUriTask extends AsyncTask<Uri, Void, Uri> {
+    /**
+     * 保存原图
+     */
+    private class SaveSourceImgTask extends AsyncTask<Uri, Void, Uri> {
 
         @Override
         protected Uri doInBackground(Uri... params) {
@@ -328,9 +339,8 @@ public class TakePhotoManager implements LifecycleListener {
 
         @Override
         protected void onPostExecute(Uri uri) {
-            //不需要裁剪 直接返回
             if (cropOptions == null) {
-                handleResult(uri);
+                compress(uri);
             }
         }
     }
@@ -365,15 +375,15 @@ public class TakePhotoManager implements LifecycleListener {
                 }
                 if (insert != null) {
                     outputStream = contentResolver.openOutputStream(insert);
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = ImgUtil.computeSize(inputStream);
+//                    BitmapFactory.Options options = new BitmapFactory.Options();
+//                    options.inSampleSize = ImgUtil.computeSize(inputStream);
                     Bitmap tagBitmap = BitmapFactory.decodeStream(
-                            mContext.getContentResolver().openInputStream(outPutUri), null, options);
+                            mContext.getContentResolver().openInputStream(outPutUri));
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     if (ImgUtil.JPEG_MIME_TYPE(outPutUri)) {
                         tagBitmap = ImgUtil.rotatingImage(tagBitmap, ImgUtil.getMetadataRotation(mContext, outPutUri));
                     }
-                    tagBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+                    tagBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     tagBitmap.recycle();
                     if (outputStream != null) {
                         outputStream.write(stream.toByteArray());
@@ -385,15 +395,15 @@ public class TakePhotoManager implements LifecycleListener {
                 return insert;
 
             } else {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = ImgUtil.computeSize(inputStream);
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inSampleSize = ImgUtil.computeSize(inputStream);
                 Bitmap tagBitmap = BitmapFactory.decodeStream(
-                        mContext.getContentResolver().openInputStream(outPutUri), null, options);
+                        mContext.getContentResolver().openInputStream(outPutUri));
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 if (ImgUtil.JPEG_MIME_TYPE(outPutUri)) {
                     tagBitmap = ImgUtil.rotatingImage(tagBitmap, ImgUtil.getMetadataRotation(mContext, outPutUri));
                 }
-                tagBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
+                tagBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 tagBitmap.recycle();
 
                 String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
@@ -430,7 +440,7 @@ public class TakePhotoManager implements LifecycleListener {
         }
     }
 
-    private void handleResult(final Uri outPutUri) {
+    private void compress(final Uri outPutUri) {
         if (compressConfig == null) {
             if (takePhotoResult != null) {
                 takePhotoResult.takeSuccess(Collections.singletonList(outPutUri));
@@ -517,7 +527,7 @@ public class TakePhotoManager implements LifecycleListener {
         if (takeType == TYPE_TAKE_PHOTO) {
             try {
                 //TODO 在androidQ上 如果outPutUri是MediaStore创建的Uri，图片未保存的时候成功的时候，会留下一个空的img
-                this.outPutUri = TUriUtils.checkUri(mContext, outPutUri, ImgUtil.extSuffix(outPutUri));
+                this.outPutUri = TUriUtils.checkTakePhotoUri(mContext, outPutUri, ImgUtil.extSuffix(outPutUri));
                 this.intent = intent == null ? IntentUtils.getCaptureIntent(this.outPutUri) : intent;
             } catch (TakeException e) {
                 e.printStackTrace();
@@ -531,7 +541,11 @@ public class TakePhotoManager implements LifecycleListener {
         }
 
         if (IntentUtils.intentAvailable(mContext, intent)) {
-            startActivityForResult(intent, takeType == TYPE_TAKE_PHOTO ? TAKE_PHOTO_RESULT : DIRECTORY_PICTURES_RESULT);
+            try {
+                startActivityForResult(intent, takeType == TYPE_TAKE_PHOTO ? TAKE_PHOTO_RESULT : DIRECTORY_PICTURES_RESULT);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             if (takePhotoResult != null) {
                 takePhotoResult.takeFailure(new TakeException(takeType == TYPE_TAKE_PHOTO ? TConstant.TYPE_NO_CAMERA : TConstant.TYPE_NO_MATCH_PICK_INTENT));

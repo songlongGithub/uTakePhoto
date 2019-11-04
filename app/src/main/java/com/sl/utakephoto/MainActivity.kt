@@ -1,6 +1,8 @@
 package com.sl.utakephoto
 
 import android.content.ContentValues
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -30,9 +32,20 @@ class MainActivity : AppCompatActivity() {
 
         capture.setOnClickListener {
 
-            val takePhotoManager = UTakePhoto .with(this)
+            val takePhotoManager = UTakePhoto.with(this)
             if (take_photo_btn.isChecked) {
-                takePhotoManager.openCamera("Pictures/bodivis")
+                takePhotoManager.openCamera(
+//                    Uri.fromFile(
+//                        File(
+//                            Environment.getExternalStorageDirectory(),
+//                            "bodivis/test.jpg"
+//                        )
+//                    )//androidQ会报错
+                    contentResolver.insert(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            ContentValues()
+                        )
+                )
             } else {
                 takePhotoManager.openAlbum()
             }
@@ -68,9 +81,9 @@ class MainActivity : AppCompatActivity() {
 //                        Uri.fromFile(
 //                            File(
 //                                Environment.getExternalStorageDirectory(),
-//                                "/bodivis/10086.png"
+//                                "bodivis/test2.jpg"
 //                            )
-//                        )androidQ会报错
+//                        )//androidQ会报错
                         contentResolver.insert(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             ContentValues()
@@ -84,7 +97,15 @@ class MainActivity : AppCompatActivity() {
 
             takePhotoManager.build(object : ITakePhotoResult {
                 override fun takeSuccess(uriList: MutableList<Uri>?) {
-                    photoIv.setImageURI(uriList?.get(0))
+                    uriList?.get(0)?.let { it1 ->
+                        val pfd = contentResolver.openFileDescriptor(it1, "r")
+                        if (pfd!=null){
+                            val bitmap =
+                                BitmapFactory.decodeFileDescriptor(pfd.fileDescriptor)
+                            photoIv.setImageBitmap(bitmap)
+                        }
+
+                    }
 
                 }
 

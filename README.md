@@ -186,14 +186,24 @@ UTakePhoto.with(mActivity).openCamera().setCompressConfig(compressConfig)
 2.relativePath如何使用
 
 relativePath对应AndoridQ的MediaStore.Images.Media.RELATIVE_PATH，MediaColumns.RELATIVE_PATH来指定存储的次级目录，这个目录可以使多级；
-但使用的时候需要注意，必须以 Pictures/DCIM 为跟路径；AndroidQ以下根路径Environment.getExternalStorageDirectory()，这时候relativePath就可以为任意子路径
-建议使用relativePath的时候，openCamera(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? "Pictures/项目名称等等" : "项目名称等等")
+但使用的时候需要注意，必须以 Pictures/DCIM 为跟路径；AndroidQ以下根路径Environment.getExternalStorageDirectory()，这时候relativePath就可以为任意子路径；
+建议使用relativePath的时候，加以区分，如openCamera(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? "Pictures/项目名称等等" : "项目名称等等")；
+使用relativePath会主动刷新相册。
 
 3.支持多图选择吗
 
 支持，正在写，还没写完，哈哈
 
-4.有问题可以通过issue反馈，或者发送到616727136@qq.com邮箱
+4.支持AndroidX吗
+
+支持，低版本的有需求的话，我再写一个；
+
+5.AndroidQ的问题
+MediaStore中，DATA（即_data）字段，在Android Q中开始废弃，不再表示文件的真实路径。读写文件或判断文件是否存在，不应该使用DATA字段，而要使用openFileDescriptor。
+同时也无法直接使用路径访问公共目录的文件。
+
+
+5.有问题可以通过issue反馈，或者发送到616727136@qq.com邮箱
 
 ## License
    Copyright 2019 sl

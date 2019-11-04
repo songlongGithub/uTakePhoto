@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -106,7 +105,6 @@ public class CompressImageImpl implements CompressImage, Handler.Callback {
 
     private Uri compress(final Uri uri) throws IOException, TakeException {
         InputStream inputStream = context.getContentResolver().openInputStream(uri);
-
         if (needCompress(leastCompressSize, inputStream)) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = ImgUtil.computeSize(inputStream);
@@ -117,7 +115,7 @@ public class CompressImageImpl implements CompressImage, Handler.Callback {
             }
             tagBitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 60, stream);
             tagBitmap.recycle();
-            targetUri = TUriUtils.checkUri(context, targetUri, ImgUtil.extSuffix(uri));
+            targetUri = TUriUtils.checkCropUri(context, targetUri, ImgUtil.extSuffix(uri));
 
             OutputStream outputStream = context.getContentResolver().openOutputStream(targetUri);
             if (outputStream != null) {
@@ -127,19 +125,35 @@ public class CompressImageImpl implements CompressImage, Handler.Callback {
             stream.close();
             inputStream.close();
             return targetUri;
+        } else {
+
+            if (targetUri != null) {
+                //保存到指定路径
+                Bitmap tagBitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri));
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                if (ImgUtil.JPEG_MIME_TYPE(uri)) {
+                    tagBitmap = ImgUtil.rotatingImage(tagBitmap, ImgUtil.getMetadataRotation(context, uri));
+                }
+                tagBitmap.compress(focusAlpha ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 100, stream);
+                tagBitmap.recycle();
+                targetUri = TUriUtils.checkCropUri(context, targetUri, ImgUtil.extSuffix(uri));
+
+                OutputStream outputStream = context.getContentResolver().openOutputStream(targetUri);
+                if (outputStream != null) {
+                    outputStream.write(stream.toByteArray());
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+                stream.close();
+                inputStream.close();
+                return targetUri;
+            }
         }
         return uri;
 
     }
 
-    private Uri getRealUri(Context context) {
-        if (targetUri != null) {
-
-            return targetUri;
-        }
-
-        return null;
-    }
 
     private boolean needCompress(int leastCompressSize, InputStream path) {
         if (leastCompressSize > 0) {
