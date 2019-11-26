@@ -229,7 +229,7 @@ relativePath对应AndoridQ的MediaStore.Images.Media.RELATIVE_PATH，MediaColumn
 6.AndroidQ的问题
 MediaStore中，DATA（即_data）字段，在Android Q中开始废弃，不再表示文件的真实路径。读写文件或判断文件是否存在，不应该使用DATA字段，而要使用openFileDescriptor。
 同时也无法直接使用路径访问公共目录的文件。
-androidQ的储存空间适配，请参考https://github.com/songlongGithub/scoped_storage_sample，README里有详细的介绍
+androidQ的储存空间适配，请参考https://github.com/songlongGithub/scoped_storage_sample
 
 
 5.有问题可以通过issue反馈，或者发送到616727136@qq.com邮箱
