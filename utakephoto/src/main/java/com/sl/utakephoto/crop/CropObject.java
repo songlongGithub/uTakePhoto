@@ -92,7 +92,7 @@ public class CropObject {
             throw new IllegalArgumentException("Width and Height must be greater than zero");
         }
         RectF inner = mBoundedRect.getInner();
-        CropMath.fixAspectRatioContained(inner, width, height);
+        CropMath.fixScaleAspectRatioContained(inner, width, height);
         if (inner.width() < mMinSideSize || inner.height() < mMinSideSize) {
             return false;
         }

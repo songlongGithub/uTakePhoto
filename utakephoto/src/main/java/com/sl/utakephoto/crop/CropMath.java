@@ -33,8 +33,8 @@ public class CropMath {
      * |        v
      * 3<-------2
      *
-     * @param r  the rectangle to get the corners of
-     * @return  the float array of corners (8 floats)
+     * @param r the rectangle to get the corners of
+     * @return the float array of corners (8 floats)
      */
 
     public static float[] getCornersFromRect(RectF r) {
@@ -88,8 +88,8 @@ public class CropMath {
      * image bound rectangle, clamps it to the edge of the rectangle.
      *
      * @param imageBound the rectangle to clamp edge points to.
-     * @param array an array of points to clamp to the rectangle, gets set to
-     *            the clamped values.
+     * @param array      an array of points to clamp to the rectangle, gets set to
+     *                   the clamped values.
      */
     public static void getEdgePoints(RectF imageBound, float[] array) {
         if (array.length < 2)
@@ -104,7 +104,7 @@ public class CropMath {
      * Takes a point and the corners of a rectangle and returns the two corners
      * representing the side of the rectangle closest to the point.
      *
-     * @param point the point which is being checked
+     * @param point   the point which is being checked
      * @param corners the corners of the rectangle
      * @return two corners representing the side of the rectangle
      */
@@ -132,7 +132,7 @@ public class CropMath {
      *
      * @param point 2D point to check
      * @param bound rectangle to rotate
-     * @param rot angle of rotation about rectangle center
+     * @param rot   angle of rotation about rectangle center
      * @return true if point is within rotated rectangle
      */
     public static boolean pointInRotatedRect(float[] point, RectF bound, float rot) {
@@ -149,9 +149,9 @@ public class CropMath {
     /**
      * Checks if a given point is within a rotated rectangle.
      *
-     * @param point 2D point to check
+     * @param point       2D point to check
      * @param rotatedRect corners of a rotated rectangle
-     * @param center center of the rotated rectangle
+     * @param center      center of the rotated rectangle
      * @return true if point is within rotated rectangle
      */
     public static boolean pointInRotatedRect(float[] point, float[] rotatedRect, float[] center) {
@@ -201,19 +201,52 @@ public class CropMath {
             r.left = r.centerX() - finalW / 2;
             r.right = r.left + finalW;
         }
+
+    }
+
+    /**
+     * Resizes rectangle to have a certain aspect ratio (center remains
+     * stationary) while constraining it to remain within the original rect.
+     *
+     * @param r rectangle to resize
+     * @param w new width aspect
+     * @param h new height aspect
+     */
+    public static void fixScaleAspectRatioContained(RectF r, float w, float h) {
+        float origW = r.width();
+        float origH = r.height();
+        float origA = origW / origH;
+        float a = w / h;
+        float finalW = origW;
+        float finalH = origH;
+        if (origA < a) {
+            finalH = origW / a;
+            r.top = r.centerY() - finalH / 2;
+            r.bottom = r.top + finalH;
+        } else {
+            finalW = origH * a;
+            r.left = r.centerX() - finalW / 2;
+            r.right = r.left + finalW;
+        }
+        r.left=r.centerX()-r.width()*0.35f;
+        r.right=r.centerX()+r.width()*0.35f;
+        r.top=r.centerY()-r.height()*0.35f;
+        r.bottom=r.centerY()+r.height()*0.35f;
+
     }
 
     /**
      * Stretches/Scales/Translates photoBounds to match displayBounds, and
      * and returns an equivalent stretched/scaled/translated cropBounds or null
      * if the mapping is invalid.
-     * @param cropBounds  cropBounds to transform
-     * @param photoBounds  original bounds containing crop bounds
-     * @param displayBounds  final bounds for crop
-     * @return  the stretched/scaled/translated crop bounds that fit within displayBounds
+     *
+     * @param cropBounds    cropBounds to transform
+     * @param photoBounds   original bounds containing crop bounds
+     * @param displayBounds final bounds for crop
+     * @return the stretched/scaled/translated crop bounds that fit within displayBounds
      */
     public static RectF getScaledCropBounds(RectF cropBounds, RectF photoBounds,
-            RectF displayBounds) {
+                                            RectF displayBounds) {
         Matrix m = new Matrix();
         m.setRectToRect(photoBounds, displayBounds, Matrix.ScaleToFit.FILL);
         RectF trueCrop = new RectF(cropBounds);
@@ -225,8 +258,9 @@ public class CropMath {
 
     /**
      * Returns the size of a bitmap in bytes.
-     * @param bmap  bitmap whose size to check
-     * @return  bitmap size in bytes
+     *
+     * @param bmap bitmap whose size to check
+     * @return bitmap size in bytes
      */
     public static int getBitmapSize(Bitmap bmap) {
         return bmap.getRowBytes() * bmap.getHeight();
@@ -234,8 +268,9 @@ public class CropMath {
 
     /**
      * Constrains rotation to be in [0, 90, 180, 270] rounding down.
-     * @param rotation  any rotation value, in degrees
-     * @return  integer rotation in [0, 90, 180, 270]
+     *
+     * @param rotation any rotation value, in degrees
+     * @return integer rotation in [0, 90, 180, 270]
      */
     public static int constrainedRotation(float rotation) {
         int r = (int) ((rotation % 360) / 90);

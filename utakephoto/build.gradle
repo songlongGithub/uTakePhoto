@@ -30,7 +30,7 @@ android {
 //    userOrg = 'jkl446041'
 //    groupId = 'com.sl.utakephoto'
 //    artifactId = 'uTakePhoto'
-//    publishVersion = '1.1.0-alpha'
+//    publishVersion = '1.1.0'
 //    desc = 'This is a project to help take and select photos'
 //    website = 'https://github.com/songlongGithub/uTakePhoto'
 //    uploadName = 'uTakePhoto'
