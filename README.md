@@ -57,7 +57,7 @@ Gradle:
 
 
 ```
-implementation 'com.sl.utakephoto:uTakePhoto:1.0.6'
+implementation 'com.sl.utakephoto:uTakePhoto:1.1.0'
 ```
 Maven
 
@@ -235,8 +235,10 @@ androidQ的储存空间适配，请参考https://github.com/songlongGithub/scope
 5.有问题可以通过issue反馈，或者发送到616727136@qq.com邮箱
 
 ## 版本更新
-**1.1.0-alpha**
-* 1.解决androidN以下机型，添加file.exists的判断
+
+**1.1.0**
+* 1."修改自定义裁剪时，裁剪框默认贴着边框，不容易选择的问题
+
 
 **1.0.6**
 * 1.修改回调返回原图的bug
