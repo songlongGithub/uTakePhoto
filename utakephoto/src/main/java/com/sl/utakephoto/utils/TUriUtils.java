@@ -1,10 +1,12 @@
 package com.sl.utakephoto.utils;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -174,6 +176,27 @@ public class TUriUtils {
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "/" + timeStamp + (TextUtils.isEmpty(suffix) ? ".jpg" : suffix));
         if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
         return Uri.fromFile(file);
+    }
+    public static Uri getTempSchemeUri(@NonNull Context context) {
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            return getTempSchemeUriR(context);
+        }else {
+            return getTempSchemeFileUri(context);
+        }
+
+
+    }
+    private static Uri getTempSchemeUriR(@NonNull Context context){
+        String fileName = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date())+"_CROP.jpg";
+
+        File imgFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + fileName);
+        // 通过 MediaStore API 插入file 为了拿到系统裁剪要保存到的uri（因为App没有权限不能访问公共存储空间，需要通过 MediaStore API来操作）
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DATA, imgFile.getAbsolutePath());
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,  values);
+
     }
 
 }

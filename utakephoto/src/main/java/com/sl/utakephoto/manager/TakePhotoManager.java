@@ -336,7 +336,11 @@ public class TakePhotoManager implements LifecycleListener {
         } else if (requestCode == PHOTO_WITCH_CROP_RESULT) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    handleResult(tempUri);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                        handleResult(tempUri);
+                    }else {
+                        handleResult(data.getData());
+                    }
                 }
             } else {
                 takeCancel();
@@ -632,12 +636,14 @@ public class TakePhotoManager implements LifecycleListener {
 
 
     private void crop(Uri takePhotoUri) {
-        tempUri = TUriUtils.getTempSchemeFileUri(mContext);
+        tempUri = TUriUtils.getTempSchemeUri(mContext);
         Log.d(TConstant.TAG, "tempUri :" + tempUri);
         if (cropOptions.isUseOwnCrop()) {
             Intent cropIntent = new Intent();
-            cropIntent.setData(takePhotoUri);
+//            cropIntent.setData(takePhotoUri);
+            cropIntent.setDataAndType(takePhotoUri,"image/*");
             cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
+
             if (cropOptions.getAspectX() * cropOptions.getAspectY() > 0) {
                 cropIntent.putExtra(CropExtras.KEY_ASPECT_X, cropOptions.getAspectX());
                 cropIntent.putExtra(CropExtras.KEY_ASPECT_Y, cropOptions.getAspectY());

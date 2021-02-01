@@ -97,13 +97,13 @@ class MainActivity : AppCompatActivity() {
             takePhotoManager.build(object : ITakePhotoResult {
                 override fun takeSuccess(uriList: MutableList<Uri>?) {
                     uriList?.get(0)?.let { it1 ->
-
                         val pfd = contentResolver.openFileDescriptor(it1, "r")
                         if (pfd != null) {
                             val bitmap =
                                 BitmapFactory.decodeFileDescriptor(pfd.fileDescriptor)
                             photoIv.setImageBitmap(bitmap)
                         }
+//                        photoIv.setImageURI(it1)
 
                     }
 
