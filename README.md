@@ -57,7 +57,7 @@ Gradle:
 
 
 ```
-implementation 'com.sl.utakephoto:uTakePhoto:1.1.0'
+implementation 'com.sl.utakephoto:uTakePhoto:1.1.1'
 ```
 Maven
 
@@ -65,7 +65,7 @@ Maven
 <dependency>
   <groupId>com.sl.utakephoto</groupId>
   <artifactId>uTakePhoto</artifactId>
-  <version>1.0.6</version>
+  <version>1.1.1</version>
   <type>pom</type>
 </dependency>
 ```
