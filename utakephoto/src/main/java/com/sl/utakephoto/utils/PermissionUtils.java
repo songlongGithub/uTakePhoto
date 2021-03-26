@@ -20,14 +20,9 @@ public final class PermissionUtils {
 
     static {
         MIN_SDK_PERMISSIONS = new SimpleArrayMap<String, Integer>(8);
-        MIN_SDK_PERMISSIONS.put("com.android.voicemail.permission.ADD_VOICEMAIL", 14);
-        MIN_SDK_PERMISSIONS.put("android.permission.BODY_SENSORS", 20);
-        MIN_SDK_PERMISSIONS.put("android.permission.READ_CALL_LOG", 16);
+        MIN_SDK_PERMISSIONS.put("android.permission.CAMERA", 15);
         MIN_SDK_PERMISSIONS.put("android.permission.READ_EXTERNAL_STORAGE", 16);
-        MIN_SDK_PERMISSIONS.put("android.permission.USE_SIP", 9);
-        MIN_SDK_PERMISSIONS.put("android.permission.WRITE_CALL_LOG", 16);
-        MIN_SDK_PERMISSIONS.put("android.permission.SYSTEM_ALERT_WINDOW", 23);
-        MIN_SDK_PERMISSIONS.put("android.permission.WRITE_SETTINGS", 23);
+        MIN_SDK_PERMISSIONS.put("android.permission.WRITE_EXTERNAL_STORAGE", 17);
     }
 
     private PermissionUtils() {
