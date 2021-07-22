@@ -336,9 +336,9 @@ public class TakePhotoManager implements LifecycleListener {
         } else if (requestCode == PHOTO_WITCH_CROP_RESULT) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         handleResult(tempUri);
-                    }else {
+                    } else {
                         handleResult(data.getData());
                     }
                 }
@@ -585,7 +585,7 @@ public class TakePhotoManager implements LifecycleListener {
                 return;
             }
         } else {
-            this.intent = intent == null ? IntentUtils.getAlbumIntent() : intent;
+            this.intent = intent == null ? Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? IntentUtils.getPickIntentWithDocuments() : IntentUtils.getAlbumIntent() : intent;
         }
 
         if (IntentUtils.intentAvailable(mContext, intent)) {
@@ -641,7 +641,7 @@ public class TakePhotoManager implements LifecycleListener {
         if (cropOptions.isUseOwnCrop()) {
             Intent cropIntent = new Intent();
 //            cropIntent.setData(takePhotoUri);
-            cropIntent.setDataAndType(takePhotoUri,"image/*");
+            cropIntent.setDataAndType(takePhotoUri, "image/*");
             cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
 
             if (cropOptions.getAspectX() * cropOptions.getAspectY() > 0) {
@@ -664,14 +664,14 @@ public class TakePhotoManager implements LifecycleListener {
             }
         } else {
             Intent cropIntentWithOtherApp = IntentUtils.getCropIntent(takePhotoUri, tempUri, cropOptions);
+            startActivityForResult(cropIntentWithOtherApp, PHOTO_WITCH_CROP_RESULT);
 
-            if (IntentUtils.intentAvailable(mContext, cropIntentWithOtherApp)) {
-                startActivityForResult(cropIntentWithOtherApp, PHOTO_WITCH_CROP_RESULT);
-            } else {
-                if (takePhotoResult != null) {
-                    takePhotoResult.takeFailure(new TakeException(TConstant.TYPE_NO_MATCH_CROP_INTENT));
-                }
-            }
+//            if (IntentUtils.intentAvailable(mContext, cropIntentWithOtherApp)) {
+//            } else {
+//                if (takePhotoResult != null) {
+//                    takePhotoResult.takeFailure(new TakeException(TConstant.TYPE_NO_MATCH_CROP_INTENT));
+//                }
+//            }
         }
 
 

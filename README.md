@@ -53,22 +53,13 @@
 ```
 
 ## 安装说明
-Gradle:
+Gradle:迁移到mavenCentral
 
 
 ```
-implementation 'com.sl.utakephoto:uTakePhoto:1.1.1'
+implementation 'io.github.songlonggithub:uTakePhoto:1.2.0'
 ```
-Maven
 
-```
-<dependency>
-  <groupId>com.sl.utakephoto</groupId>
-  <artifactId>uTakePhoto</artifactId>
-  <version>1.1.1</version>
-  <type>pom</type>
-</dependency>
-```
 # API
 ## 基本用法
 图片默认储存在context.getExternalFilesDir("Pictures") 目录下，不需要指定的话，一行代码足矣：
@@ -235,6 +226,10 @@ androidQ的储存空间适配，请参考https://github.com/songlongGithub/scope
 5.有问题可以通过issue反馈，或者发送到616727136@qq.com邮箱
 
 ## 版本更新
+**1.2.0**
+* 迁移到mavenCentral
+* 修改部分机型裁剪后uri未空的问题
+
 **1.1.2**
 * 修改Android11因包名可见行，无法获取包名的异常
 

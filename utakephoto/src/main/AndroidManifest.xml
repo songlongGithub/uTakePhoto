@@ -15,6 +15,9 @@
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE"/>
         </intent>
+        <intent>
+            <action android:name="com.android.camera.action.CROP"/>
+        </intent>
     </queries>
 
     <application>

@@ -1,7 +1,10 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+//apply plugin: 'com.novoda.bintray-release'
 
-
+ext {
+    PUBLISH_ARTIFACT_ID = 'uTakePhoto'
+}
+apply from: '../publish.gradle'
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -26,16 +29,16 @@ android {
 
 }
 
-publish {
-    userOrg = 'jkl446041'
-    groupId = 'com.sl.utakephoto'
-    artifactId = 'uTakePhoto'
-    publishVersion = '1.1.2'
-    desc = 'This is a project to help take and select photos'
-    website = 'https://github.com/songlongGithub/uTakePhoto'
-    uploadName = 'uTakePhoto'
-}
+//publish {
+//    userOrg = 'jkl446041'
+//    groupId = 'com.sl.utakephoto'
+//    artifactId = 'uTakePhoto'
+//    publishVersion = '1.1.2'
+//    desc = 'This is a project to help take and select photos'
+//    website = 'https://github.com/songlongGithub/uTakePhoto'
+//    uploadName = 'uTakePhoto'
+//}
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
 }

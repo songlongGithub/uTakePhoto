@@ -178,7 +178,7 @@ public class TUriUtils {
         return Uri.fromFile(file);
     }
     public static Uri getTempSchemeUri(@NonNull Context context) {
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             return getTempSchemeUriR(context);
         }else {
             return getTempSchemeFileUri(context);
@@ -189,12 +189,13 @@ public class TUriUtils {
     private static Uri getTempSchemeUriR(@NonNull Context context){
         String fileName = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date())+"_CROP.jpg";
 
-        File imgFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + fileName);
+//        File imgFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + fileName);
         // 通过 MediaStore API 插入file 为了拿到系统裁剪要保存到的uri（因为App没有权限不能访问公共存储空间，需要通过 MediaStore API来操作）
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DATA, imgFile.getAbsolutePath());
+//        values.put(MediaStore.Images.Media.DATA, imgFile.getAbsolutePath());
         values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/DCIM");
         return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,  values);
 
     }
